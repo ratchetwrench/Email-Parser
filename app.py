@@ -11,6 +11,7 @@ import getpass
 import imaplib
 import sys
 import email_1
+import logging
 
 
 EMAIL_ACCOUNT = "example@outlook.com"
