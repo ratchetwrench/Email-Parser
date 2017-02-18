@@ -2,3 +2,7 @@
 .gitignore
 .idea/
 Makefile
+make.bat
+build/
+source/_static/
+source/_templates/
