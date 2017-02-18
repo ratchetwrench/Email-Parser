@@ -50,7 +50,7 @@ def parse_email(notification):
     else:
         carriers_affected = parse_attachment(email_attachment)
 
-    # Tuesday, January 31, 2017 3:42:34 PM
+    # Tuesday, January 31, 2017 3:42:34 PM to YYYY-MM-DDTHH:MM:SS
     rfc_1123 = "%A, %B %d, %Y %H:%M:%S %p"
     iso_8601 = "%Y-%m-%dT%H:%M:%S"
     # TODO: fix notification date and string date parsing
