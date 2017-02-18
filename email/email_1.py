@@ -13,10 +13,6 @@ import getpass
 import imaplib
 import sys
 
-import email_1.header
-
-import email_1
-
 # TODO: create email reader
 """EmailReader
 Takes unread Outlook emails from specified folder
