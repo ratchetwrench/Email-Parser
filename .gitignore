@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+.gitignore
+.idea/
+Makefile
+app.py
+build/
+database.py
+email_1.py
+email_2.py
+email_3.py
+email_4.py
+make.bat
+notification.txt
+source/
