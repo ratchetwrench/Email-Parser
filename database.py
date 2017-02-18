@@ -9,10 +9,20 @@ from sqlalchemy import String
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
-
-engine = create_engine("mysql://app:password@localhost:8889 /EmailParser",
+engine = create_engine("mysql://app:password@localhost:8889/EmailParser",
+                       isolation_level="READ COMMITTED",
                        pool_recycle=8889,
-                       isolation_level="READ COMMITTED")
+                       # echo=True,
+                       # convert_unicode=bool,
+                       # pool_recycle=int,
+                       # encoding=str,
+                       # pool_size=int,
+                       # poolclass=type,
+                       # connect_args=dict,
+                       # max_overflow=int,
+                       # module=Tix.NoneType / new.module,
+                       # strategy=str
+                       )
 
 engine.execute("CREATE DATABASE IF NOT EXIST test")
 engine.execute("USE test")
@@ -59,6 +69,8 @@ class AffectedCarrier(Base):
     carrier_id = Column(Integer, ForeignKey="Carrier.carrier_id")
 
     # user = relationship("User", back_populates="addresses")
+
+
 class CarrierStats(Base):
     __table_name__ = 'Carrier_Stats'
     __table_args__ = {'mysql_engine': 'InnoDB'}
@@ -80,6 +92,7 @@ class CarrierStats(Base):
     avg_service_degradation_duration = Column(Integer())
     min_service_degradation_duration = Column(Integer())
     max_service_degradation_duration = Column(Integer())
+
 
 class NotificationStats(Base):
     __table_name__ = 'Notification_Stats'
