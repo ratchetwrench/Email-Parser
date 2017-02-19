@@ -8,23 +8,32 @@
 #
 # This is an updated version of the original -- modified to work with Python 3.4.
 #
-import datetime
-import getpass
-import imaplib
 import sys
+import imaplib
+import getpass
+import email
+import datetime
+import configparser
+from logging import DEBUG
 
-# TODO: create email reader
-"""EmailReader
-Takes unread Outlook emails from specified folder
-Opens the email and reads into an object.
-"""
 
-EMAIL_ACCOUNT = "notatallawhistleblowerIswear@gmail.com"
+try:
+    config = configparser.ConfigParser()
+    config.read("config.ini")
 
-# Use 'INBOX' to read inbox.  Note that whatever folder is specified,
-# after successfully running this script all emails in that folder
-# will be marked as read.
-EMAIL_FOLDER = "Top Secret/PRISM Documents"
+    EMAIL_ACCOUNT = config['email']['email_account']
+    CREDENTIALS = config['email']['credentials']
+    EMAIL_FOLDER = config['email']['email_folder']
+    IMAP4_SSL_PORT = config['email']['imap4_ssl_port']
+    DOMAIN = config['email']['domain']
+
+    MAILBOX = imaplib.IMAP4_SSL(DOMAIN, IMAP4_SSL_PORT)
+
+    if DEBUG:
+        print(config.read('config.ini'))
+
+except configparser.Error as e:
+    print(e)
 
 
 def process_mailbox(mail_box):
@@ -32,7 +41,7 @@ def process_mailbox(mail_box):
     Do something with emails messages in the folder.
     For the sake of this example, print some headers.
     """
-
+    # Search mailbox for matching messages
     rv, data = mail_box.search(None, "ALL")
     if rv != 'OK':
         print("No messages found!")
@@ -40,25 +49,27 @@ def process_mailbox(mail_box):
 
     for num in data[0].split():
         rv, data = mail_box.fetch(num, '(RFC822)')
+        """Fetch (parts of) messages.
+        message_parts should be a string of message part names,
+        enclosed within parentheses, eg: "(UID BODY[TEXT])".
+        Returned data are tuples of message part envelope and data.
+        """
         if rv != 'OK':
             print("ERROR getting message", num)
             return
 
-        msg = email_1.message_from_bytes(data[0][1])
-        hdr = email_1.header.make_header(
-            email_1.header.decode_header(msg['Subject']))
+        msg = email.message_from_bytes(data[0][1])
+        hdr = email.header.make_header(
+            email.header.decode_header(msg['Subject']))
         subject = str(hdr)
         print('Message %s: %s' % (num, subject))
         print('Raw Date:', msg['Date'])
         # Now convert to local date-time
-        date_tuple = email_1.utils.parsedate_tz(msg['Date'])
+        date_tuple = email.utils.parsedate_tz(msg['Date'])
         if date_tuple:
             local_date = datetime.datetime.fromtimestamp(
-                email_1.utils.mktime_tz(date_tuple))
+                email.utils.mktime_tz(date_tuple))
             print("Local Date:", local_date.strftime("%a, %d %b %Y %H:%M:%S"))
-
-
-mail_box = imaplib.IMAP4_SSL('imap.outlook.com')
 
 try:
     rv, data = mail_box.login(EMAIL_ACCOUNT, getpass.getpass())
@@ -82,3 +93,21 @@ else:
     print("ERROR: Unable to open mailbox ", rv)
 
 mail_box.logout()
+
+#---------------------------#
+#                           #
+# I added this stuff below  #
+#                           #
+#---------------------------#
+with IMAP4(MAILBOX) as M:
+# Do something...
+
+if __name__ == '__main__':
+    try:
+        rv, data = MAILBOX.login(EMAIL_ACCOUNT, CREDENTIALS)
+        while True:
+            process_mailbox(MAILBOX)
+    except ValueError as e:
+        print(e)
+    finally:
+        print("Exiting...")

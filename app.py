@@ -8,8 +8,6 @@ import re
 with open('/Users/david/dev/email-parser/notification.txt', 'r') as f:
     email_notification = f.read()
 
-AFFECTED_CARRIERS = []
-
 
 def parse_email(notification, email_attachment=None):
     """Given an email return the desired contents.
@@ -18,20 +16,12 @@ def parse_email(notification, email_attachment=None):
     # TODO: Do something with the email
 
     category = r'Category: (?P<category>[\w].*)'
-    # print(category.group(1))
-
     incident_number = r': (?P<incident_number>INC[\d]{12})'
-    # print(incident_number.group(1))
-
     content = re.compile('INC[\d]*\n\n(?P<content>.*)Customer Impact:',
                          re.DOTALL) \
         .search(notification)
     content = content.group(1).strip()
-    # print(re.sub(r'Super Secret Provider', r'Our SMS Provider',
-
     customer_impact = r'Customer Impact: (?P<customer_impact>[\w].*)'
-    # print(customer_impact.group(1))
-
     # TODO: get affected carriers
     carriers_affected = r'Carriers Affected: (?P<carriers_affected>[\w].*)'
     if carriers_affected:
@@ -42,7 +32,6 @@ def parse_email(notification, email_attachment=None):
     # Tuesday, January 31, 2017 3:42:34 PM to YYYY-MM-DDTHH:MM:SS
     rfc_1123 = "%A, %B %d, %Y %H:%M:%S %p"
     iso_8601 = "%Y-%m-%dT%H:%M:%S"
-    # TODO: fix notification date and string date parsing
     sent_date = re.compile(r'Sent: (?P<sent_date>[\w]+\,'  # %A,
                            r'\s[\w]+'  # %B
                            r'\s[\d]{1,2}\,'  # %d,
@@ -51,9 +40,7 @@ def parse_email(notification, email_attachment=None):
                            r'\s[\w]{2})').search(notification)  # AM/PM
 
     start_date = r'Start Date[\/]Time: (?P<start_date>[\w].*)'
-
     end_date = r'Expected End Date[\/]Time: (?P<end_date>[\w].*)'
-
     expected_end_date = r'Expected End Date[\/]Time: (?P<expected_end_date>[\w].*)'
 
     pattern = str([category, incident_number, start_date, end_date,
@@ -61,7 +48,6 @@ def parse_email(notification, email_attachment=None):
                    customer_impact, content])
 
     result = re.compile(pattern, flags=0)
-
     print(result)
 
 
@@ -77,8 +63,6 @@ a known list of operators.
     with open(email_attachment) as attachment:
         try:
             attachment = attachment.readlines()
-            AFFECTED_CARRIERS = [carrier.strip() for carrier in attachment]
+            carriers_affected = [carrier.strip() for carrier in attachment]
         except ValueError as e:
             print(e.message)
-
-    return AFFECTED_CARRIERS
