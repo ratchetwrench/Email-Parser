@@ -7,7 +7,7 @@
 # http://www.voidynullness.net/blog/2013/07/25/gmail-email-with-python-via-imap/
 #
 # This is an updated version of the original -- modified to work with Python 3.4.
-#
+
 import sys
 import imaplib
 import getpass

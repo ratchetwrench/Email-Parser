@@ -23,5 +23,6 @@ class Handler_Class(object):
 outlook = win32com.client.DispatchWithEvents("Outlook.Application",
 Handler_Class)
 
+# new comment
 #and then an infinite loop that waits from events.
 pythoncom.PumpMessages()
